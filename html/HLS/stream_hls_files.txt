@@ -1,0 +1,3 @@
+Here is the folder for HLS files:
+
+in my case stream1.m3u8, stream1.m3u8.log, and .ts files

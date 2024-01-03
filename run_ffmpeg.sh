@@ -1,26 +1,31 @@
 #!/bin/bash
 
 # Path to the configuration file
-config_file="/opt/lampp/htdocs/stream_config.conf"
+config_file="./stream_config.conf"
 
 # Path to the HTML template
-html_template="/opt/lampp/htdocs/template.html"
+html_template="./template.html"
 
 # Directory containing the HTML files
-html_directory="/opt/lampp/htdocs"
-video_directory="/opt/lampp/htdocs" # Update with the path where .ts video files are generated
-metadata_file="/opt/lampp/htdocs/camera_metadata.json"
+html_directory="./html"
+video_directory="./html/HLS" # Update with the path where .ts video files are generated
+metadata_file="./html/camera_metadata.json"
 
 # Function to start an ffmpeg stream
 start_ffmpeg_stream() {
     local url=$1
     local stream_number=$2
-    local output_file="/opt/lampp/htdocs/stream$stream_number.m3u8" # Changed file extension to .m3u8
-    local thumbnail_file="/opt/lampp/htdocs/camera${stream_number}.jpg"
+    local output_file="${video_directory}/stream$stream_number.m3u8" # Changed file extension to .m3u8
+    local thumbnail_file="${html_directory}/camera${stream_number}.jpg"
+
+    echo $url
+    echo $thumbnail_file
+    echo $stream_number
 
     # Start ffmpeg to generate the stream and m3u8 file
-    sudo ffmpeg -rtsp_transport tcp -i "$url" -c:v copy -c:a copy -f hls -hls_time 2 -hls_list_size 3 -hls_flags delete_segments -hls_segment_filename "/opt/lampp/htdocs/stream${stream_number}-%03d.ts" "$output_file" 2> "${output_file}.log" &
+    ffmpeg -rtsp_transport tcp -i "$url" -c:v copy -c:a copy -f hls -hls_time 2 -hls_list_size 3 -hls_flags delete_segments -hls_segment_filename "${video_directory}/stream${stream_number}-%03d.ts" "$output_file" 2> "${output_file}.log" &
 
+    sleep 10
     # Generate a thumbnail for the stream
     generate_thumbnail "$output_file" "$thumbnail_file"
 
@@ -68,6 +73,10 @@ EOF
 
 # Remove the existing metadata file
 rm -f "$metadata_file"
+
+# Clean HTML directories
+rm -rf "${html_directory}/"
+mkdir -p $video_directory
 
 # Create or overwrite index.html with the initial HTML structure
 cat > "$html_directory/index.html" <<EOF
@@ -123,21 +132,25 @@ cat > "$html_directory/index.html" <<EOF
 EOF
 
 # Read each URL from the configuration file, start a stream, and create an HTML file
-i=1
-while IFS= read -r url; do
-    if [ -n "$url" ]; then
-        start_ffmpeg_stream "$url" "$i"
-        create_html_file "$i"
-        ((i++))
-    fi
+i=0
+# DEBUG
+#cat "$config_file"
+while IFS= read -r url || [[ -n "$url" ]]; do
+    echo $url
+    ((i++))
+    start_ffmpeg_stream "$url" "$i"
+    create_html_file "$i"
+    
 done < "$config_file"
+
+echo $i
 
 # Wait for a moment to allow ffmpeg processes to start
 sleep 5
 
 # Check each ffmpeg process for errors
 for j in $(seq 1 $i); do
-    if grep -q 'error' "$html_directory/stream${j}.m3u8.log"; then
+    if grep -q 'error' "$video_directory/stream${j}.m3u8.log"; then
         echo "ffmpeg for stream${j} encountered an error."
     else
         echo "ffmpeg for stream${j} is running."

@@ -1,0 +1,10 @@
+server {
+    listen 8080;  # Select a non used port
+    server_name camtest;
+    add_header Access-Control-Allow-Origin *;
+
+    location / {
+        root /home/pi/ferni3d_test/RTSP2HTTP/html;
+        index index.html;
+    }
+}

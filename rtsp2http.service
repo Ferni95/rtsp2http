@@ -1,0 +1,15 @@
+# systemd service file for moonraker
+[Unit]
+Description=Start of RTSP2HTTP after boot
+Requires=network-online.target
+After=network-online.target
+
+[Install]
+WantedBy=multi-user.target
+
+[Service]
+Type=simple
+User=pi
+ExecStart=/home/pi/ferni3d_test/RTSP2HTTP/run_ffmpeg.sh
+Restart=always
+RestartSec=10

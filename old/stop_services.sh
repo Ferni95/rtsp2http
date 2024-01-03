@@ -20,18 +20,6 @@ if [ $? -eq 0 ]; then
     running_services+="ffmpeg "
 fi
 
-# Check if XAMPP's Apache is running
-is_service_running "lampp"
-if [ $? -eq 0 ]; then
-    running_services+="lampp "
-fi
-
-# Check if SSH is running
-is_service_running "ssh"
-if [ $? -eq 0 ]; then
-    running_services+="ssh "
-fi
-
 # Check if any services are running
 if [ ! -z "$running_services" ]; then
     echo "The following services are running: $running_services"

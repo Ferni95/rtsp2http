@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Camera Thumbnails</title>
+    <style>
+        /* Add your CSS styles here for dark theme and responsiveness */
+        body {
+            background-color: #1a1a1a;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .camera-thumbnail {
+            width: 200px;
+            height: 200px;
+            margin: 10px;
+            background-color: #333333;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .camera-thumbnail:hover {
+            background-color: #555555;
+        }
+
+        .camera-thumbnail a {
+            text-decoration: none;
+            color: #ffffff;
+            font-size: 18px;
+            text-align: center;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="camera-thumbnail">
+        <a href="camera1.html">
+            <img src="camera1.jpg" alt="Camera 1 Thumbnail" width="150" height="150">
+        </a>
+        <a href="camera1.html">Camera 1</a>
+    </div>
+</body></html>
